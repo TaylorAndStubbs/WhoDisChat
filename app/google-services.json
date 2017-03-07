@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "692673787201",
+    "firebase_url": "https://whodischat.firebaseio.com",
+    "project_id": "whodischat",
+    "storage_bucket": "whodischat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692673787201:android:33ce84051fdcd8c4",
+        "android_client_info": {
+          "package_name": "com.taylorstubbs.whodischat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692673787201-oslsf3u9gthgnkkr8amqpgienaf7q1f7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.taylorstubbs.whodischat",
+            "certificate_hash": "450613c7111d6acc0149db7d35f2e81463d342fe"
+          }
+        },
+        {
+          "client_id": "692673787201-kvt4vv55hd0n1eb9brku4dgmdsa1vm4g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABcm84j9CzTDh8iQrBPPe3SMRzMPsEKKo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692673787201-kvt4vv55hd0n1eb9brku4dgmdsa1vm4g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
