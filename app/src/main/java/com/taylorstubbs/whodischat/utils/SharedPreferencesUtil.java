@@ -12,19 +12,19 @@ import com.taylorstubbs.whodischat.R;
 
 public enum SharedPreferencesUtil {;
     private static final String TAG = "SharedPreferencesUtil";
-    private static final String USER_NAME_KEY = "userNameKey";
+    private static final String USER_PASSWORD_KEY = "userPasswordKey";
     private static final String USER_ID_KEY = "userIdKey";
 
     /**
-     * Set the user name.
+     * Set the user password.
      *
      * @param context   the activity context
-     * @param userName  the username to set
+     * @param userName  the password to set
      */
-    public static void setUserName(Context context, String userName) {
+    public static void setUserPassword(Context context, String userName) {
         getSharedPreferences(context)
                 .edit()
-                .putString(USER_NAME_KEY, userName)
+                .putString(USER_PASSWORD_KEY, userName)
                 .apply();
     }
 
@@ -42,13 +42,13 @@ public enum SharedPreferencesUtil {;
     }
 
     /**
-     * Get the username.
+     * Get the user password.
      *
      * @param context   the activity context
-     * @return          the user name
+     * @return          the user password
      */
-    public static String getUserName(Context context) {
-        return getSharedPreferences(context).getString(USER_NAME_KEY, null);
+    public static String getUserPassword(Context context) {
+        return getSharedPreferences(context).getString(USER_PASSWORD_KEY, null);
     }
 
     /**
