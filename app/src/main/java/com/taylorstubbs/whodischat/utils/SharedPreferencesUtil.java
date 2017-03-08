@@ -61,6 +61,12 @@ public enum SharedPreferencesUtil {;
         return getSharedPreferences(context).getString(USER_ID_KEY, null);
     }
 
+    /**
+     * Get SharedPreferences.
+     *
+     * @param context   the context
+     * @return          SharedPreferences
+     */
     private static SharedPreferences getSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
