@@ -29,6 +29,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
     private FragmentHelper mFragmentHelper;
     private String mUserEmail;
     private String mUserPassword;
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle saveState) {
@@ -68,7 +69,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
 
     @Override
     public void onAnonymousLogin(final FirebaseUser firebaseUser) {
-        User user = new User(firebaseUser.getUid());
+        mUser = new User(firebaseUser.getUid());
         mUserEmail = AccountUtil.appendDomainToId(firebaseUser.getUid());
         mUserPassword = AccountUtil.createRandomPassword();
 
@@ -81,7 +82,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         //create user with id and password
         mFirebaseAuthHelper.createUser(mUserEmail, mUserPassword);
         //save user in database
-        mFirebaseDatabaseHelper.saveUser(user).addOnCompleteListener(this, new OnCompleteListener<Void>() {
+        mFirebaseDatabaseHelper.saveUser(mUser).addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 startStartChatFragment(firebaseUser);
@@ -103,6 +104,6 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
      * Start the StartChatFragment.
      */
     private void startStartChatFragment(FirebaseUser user) {
-        mFragmentHelper.replaceFragment(StartChatFragment.newInstance(user.getUid()));
+        mFragmentHelper.replaceFragment(StartChatFragment.newInstance(mUser));
     }
 }

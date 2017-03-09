@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.taylorstubbs.whodischat.R;
 import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
+import com.taylorstubbs.whodischat.models.User;
 
 /**
  * Fragment that lets the user begin searching for a chat.
@@ -21,24 +22,24 @@ import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
 
 public class StartChatFragment extends Fragment {
     private static final String TAG = "StartChatFragment";
-    private static final String ARGS_USER_ID = "userId";
+    private static final String ARGS_USER = "user";
 
     private FirebaseDatabaseHelper mFirebaseDatabaseHelper;
     private StartChatFragmentCallbacks mCallbacks;
-    private String mUserId;
+    private User mUser;
 
     private Button mStartChatButton;
 
     /**
      * Create new instance.
      *
-     * @param userId    the id of the current user
-     * @return          the fragment
+     * @param user  the user
+     * @return      the fragment
      */
-    public static StartChatFragment newInstance(String userId) {
+    public static StartChatFragment newInstance(User user) {
         Bundle args = new Bundle();
         StartChatFragment fragment = new StartChatFragment();
-        args.putString(ARGS_USER_ID, userId);
+        args.putParcelable(ARGS_USER, user);
         fragment.setArguments(args);
 
         return fragment;
@@ -53,7 +54,7 @@ public class StartChatFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mFirebaseDatabaseHelper = new FirebaseDatabaseHelper();
-        mUserId = getArguments().getString(ARGS_USER_ID);
+        mUser = getArguments().getParcelable(ARGS_USER);
     }
 
     @Nullable
@@ -66,7 +67,7 @@ public class StartChatFragment extends Fragment {
         mStartChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFirebaseDatabaseHelper.findThread(mUserId).addOnCompleteListener(new OnCompleteListener<Void>() {
+                mFirebaseDatabaseHelper.findThread(mUser.userId).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mCallbacks.searchingForChat();
