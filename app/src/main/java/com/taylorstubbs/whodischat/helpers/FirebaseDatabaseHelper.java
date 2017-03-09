@@ -7,7 +7,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.taylorstubbs.whodischat.models.User;
 
 /**
- * Created by taylorstubbs on 3/8/17.
+ * A Helper class to help use firebase database.
  */
 
 public class FirebaseDatabaseHelper {
@@ -18,14 +18,31 @@ public class FirebaseDatabaseHelper {
 
     private FirebaseDatabase mDatabase;
 
+    /**
+     * Constructor.
+     */
     public FirebaseDatabaseHelper() {
         mDatabase = FirebaseDatabase.getInstance();
     }
 
-    public Task<Void> createNewFirebaseUser(User user) {
+    /**
+     * Save user in the database.
+     *
+     * @param user  the user to insert into the database
+     * @return      the Task.
+     */
+    public Task<Void> saveUser(User user) {
+        //user starts out not searching for a thread
+        user.searchingForThread = false;
         return mDatabase.getReference().child(USER_REF).child(user.userId).setValue(user);
     }
 
+    /**
+     * Get database reference.
+     *
+     * @param refString the string to get a reference to
+     * @return          the reference
+     */
     private DatabaseReference getReference(String refString) {
         return mDatabase.getReference(refString);
     }

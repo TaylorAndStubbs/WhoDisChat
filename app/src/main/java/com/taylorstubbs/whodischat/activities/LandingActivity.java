@@ -1,15 +1,18 @@
 package com.taylorstubbs.whodischat.activities;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.taylorstubbs.whodischat.fragments.StartChatFragment;
 import com.taylorstubbs.whodischat.helpers.FirebaseAuthHelper;
 import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
 import com.taylorstubbs.whodischat.interfaces.FirebaseAuthCallbacks;
+import com.taylorstubbs.whodischat.models.User;
 import com.taylorstubbs.whodischat.utils.AccountUtil;
 import com.taylorstubbs.whodischat.utils.SharedPreferencesUtil;
 
@@ -22,7 +25,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
 
     private FirebaseAuthHelper mFirebaseAuthHelper;
     private FirebaseDatabaseHelper mFirebaseDatabaseHelper;
-    private String mUserId;
+    private String mUserEmail;
     private String mUserPassword;
 
     @Override
@@ -32,18 +35,18 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         mFirebaseAuthHelper = new FirebaseAuthHelper();
         mFirebaseDatabaseHelper = new FirebaseDatabaseHelper();
         mFirebaseAuthHelper.setCallbacks(this);
-        mUserId = SharedPreferencesUtil.getUserId(this);
+        mUserEmail = SharedPreferencesUtil.getUserId(this);
         mUserPassword = SharedPreferencesUtil.getUserPassword(this);
 
         //if credentials exist on device
-        if (mUserId != null && mUserPassword != null) {
+        if (mUserEmail != null && mUserPassword != null) {
             //if user is logged in
             if (mFirebaseAuthHelper.checkAuth() != null) {
                 //TODO proceed to chat
                 Log.d(TAG, "account already logged in, proceed to chat");
             //if user is not logged in
             } else {
-                mFirebaseAuthHelper.login(mUserId, mUserPassword);
+                mFirebaseAuthHelper.login(mUserEmail, mUserPassword);
             }
         //if credentials don't exist on device
         } else {
@@ -63,18 +66,27 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
     }
 
     @Override
-    public void onAnonymousLogin(FirebaseUser user) {
-        mUserId = AccountUtil.appendDomainToId(user.getUid());
+    public void onAnonymousLogin(FirebaseUser firebaseUser) {
+        User user = new User(firebaseUser.getUid());
+        mUserEmail = AccountUtil.appendDomainToId(firebaseUser.getUid());
         mUserPassword = AccountUtil.createRandomPassword();
 
         //Save id and password to device
-        SharedPreferencesUtil.setUserId(this, mUserId);
+        SharedPreferencesUtil.setUserId(this, mUserEmail);
         SharedPreferencesUtil.setUserPassword(this, mUserPassword);
 
         //log out of anonymous session
         mFirebaseAuthHelper.logout();
         //create user with id and password
-        mFirebaseAuthHelper.createUser(mUserId, mUserPassword);
+        mFirebaseAuthHelper.createUser(mUserEmail, mUserPassword);
+        //save user in database
+        mFirebaseDatabaseHelper.saveUser(user).addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                //TODO indicate user can now log in
+                Log.d(TAG, "User created in database");
+            }
+        });
     }
 
     @Override
