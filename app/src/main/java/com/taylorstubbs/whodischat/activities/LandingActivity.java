@@ -3,14 +3,15 @@ package com.taylorstubbs.whodischat.activities;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.taylorstubbs.whodischat.fragments.LoadingFragment;
 import com.taylorstubbs.whodischat.fragments.StartChatFragment;
 import com.taylorstubbs.whodischat.helpers.FirebaseAuthHelper;
 import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
+import com.taylorstubbs.whodischat.helpers.FragmentHelper;
 import com.taylorstubbs.whodischat.interfaces.FirebaseAuthCallbacks;
 import com.taylorstubbs.whodischat.models.User;
 import com.taylorstubbs.whodischat.utils.AccountUtil;
@@ -25,6 +26,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
 
     private FirebaseAuthHelper mFirebaseAuthHelper;
     private FirebaseDatabaseHelper mFirebaseDatabaseHelper;
+    private FragmentHelper mFragmentHelper;
     private String mUserEmail;
     private String mUserPassword;
 
@@ -34,6 +36,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
 
         mFirebaseAuthHelper = new FirebaseAuthHelper();
         mFirebaseDatabaseHelper = new FirebaseDatabaseHelper();
+        mFragmentHelper = new FragmentHelper(this);
         mFirebaseAuthHelper.setCallbacks(this);
         mUserEmail = SharedPreferencesUtil.getUserId(this);
         mUserPassword = SharedPreferencesUtil.getUserPassword(this);
@@ -42,8 +45,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         if (mUserEmail != null && mUserPassword != null) {
             //if user is logged in
             if (mFirebaseAuthHelper.checkAuth() != null) {
-                //TODO proceed to chat
-                Log.d(TAG, "account already logged in, proceed to chat");
+                startStartChatFragment();
             //if user is not logged in
             } else {
                 mFirebaseAuthHelper.login(mUserEmail, mUserPassword);
@@ -56,13 +58,12 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
 
     @Override
     protected Fragment createFragment() {
-        return StartChatFragment.newInstance();
+        return LoadingFragment.newInstance();
     }
 
     @Override
     public void onLogin(FirebaseUser user) {
-        //TODO proceed to chat
-        Log.d(TAG, "user logged in");
+        startStartChatFragment();
     }
 
     @Override
@@ -83,15 +84,20 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         mFirebaseDatabaseHelper.saveUser(user).addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                //TODO indicate user can now log in
-                Log.d(TAG, "User created in database");
+                startStartChatFragment();
             }
         });
     }
 
     @Override
     public void onCreateUser(FirebaseUser user) {
-        //TODO proceed to chat
-        Log.d(TAG, "user created");
+        startStartChatFragment();
+    }
+
+    /**
+     * Start the StartChatFragment.
+     */
+    private void startStartChatFragment() {
+        mFragmentHelper.replaceFragment(StartChatFragment.newInstance());
     }
 }
