@@ -21,7 +21,7 @@ import com.taylorstubbs.whodischat.utils.SharedPreferencesUtil;
  * Activity that logs in the user, if they aren't already, and loads the appropriate fragment.
  */
 
-public class LandingActivity extends SingleFragmentActivity implements FirebaseAuthCallbacks {
+public class LandingActivity extends SingleFragmentActivity implements FirebaseAuthCallbacks, StartChatFragment.StartChatFragmentCallbacks {
     private static final String TAG = "LandingActivity";
 
     private FirebaseAuthHelper mFirebaseAuthHelper;
@@ -45,7 +45,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         if (mUserEmail != null && mUserPassword != null) {
             //if user is logged in
             if (mFirebaseAuthHelper.checkAuth() != null) {
-                startStartChatFragment();
+                startStartChatFragment(mFirebaseAuthHelper.checkAuth());
             //if user is not logged in
             } else {
                 mFirebaseAuthHelper.login(mUserEmail, mUserPassword);
@@ -63,11 +63,11 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
 
     @Override
     public void onLogin(FirebaseUser user) {
-        startStartChatFragment();
+        startStartChatFragment(user);
     }
 
     @Override
-    public void onAnonymousLogin(FirebaseUser firebaseUser) {
+    public void onAnonymousLogin(final FirebaseUser firebaseUser) {
         User user = new User(firebaseUser.getUid());
         mUserEmail = AccountUtil.appendDomainToId(firebaseUser.getUid());
         mUserPassword = AccountUtil.createRandomPassword();
@@ -84,20 +84,25 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         mFirebaseDatabaseHelper.saveUser(user).addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                startStartChatFragment();
+                startStartChatFragment(firebaseUser);
             }
         });
     }
 
     @Override
     public void onCreateUser(FirebaseUser user) {
-        startStartChatFragment();
+        startStartChatFragment(user);
+    }
+
+    @Override
+    public void searchingForChat() {
+        mFragmentHelper.replaceFragment(LoadingFragment.newInstance());
     }
 
     /**
      * Start the StartChatFragment.
      */
-    private void startStartChatFragment() {
-        mFragmentHelper.replaceFragment(StartChatFragment.newInstance());
+    private void startStartChatFragment(FirebaseUser user) {
+        mFragmentHelper.replaceFragment(StartChatFragment.newInstance(user.getUid()));
     }
 }

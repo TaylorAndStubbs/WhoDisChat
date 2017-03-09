@@ -37,6 +37,11 @@ public class FirebaseDatabaseHelper {
         return mDatabase.getReference().child(USER_REF).child(user.userId).setValue(user);
     }
 
+    public Task<Void> findThread(String userId) {
+        //Set userSearchingForThread to true
+        return getReference(USER_REF).child(userId).child(USER_SEARCHING_FOR_THREAD_REF).setValue(true);
+    }
+
     /**
      * Get database reference.
      *
