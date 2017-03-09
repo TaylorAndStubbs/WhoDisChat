@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseUser;
 import com.taylorstubbs.whodischat.fragments.StartChatFragment;
 import com.taylorstubbs.whodischat.helpers.FirebaseAuthHelper;
+import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
 import com.taylorstubbs.whodischat.interfaces.FirebaseAuthCallbacks;
 import com.taylorstubbs.whodischat.utils.AccountUtil;
 import com.taylorstubbs.whodischat.utils.SharedPreferencesUtil;
@@ -20,6 +21,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
     private static final String TAG = "LandingActivity";
 
     private FirebaseAuthHelper mFirebaseAuthHelper;
+    private FirebaseDatabaseHelper mFirebaseDatabaseHelper;
     private String mUserId;
     private String mUserPassword;
 
@@ -28,6 +30,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         super.onCreate(saveState);
 
         mFirebaseAuthHelper = new FirebaseAuthHelper();
+        mFirebaseDatabaseHelper = new FirebaseDatabaseHelper();
         mFirebaseAuthHelper.setCallbacks(this);
         mUserId = SharedPreferencesUtil.getUserId(this);
         mUserPassword = SharedPreferencesUtil.getUserPassword(this);
