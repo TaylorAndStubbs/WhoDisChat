@@ -38,7 +38,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
         mFirebaseDatabaseHelper = new FirebaseDatabaseHelper();
         mFragmentHelper = new FragmentHelper(this);
         mFirebaseAuthHelper.setCallbacks(this);
-        mUserEmail = SharedPreferencesUtil.getUserId(this);
+        mUserEmail = SharedPreferencesUtil.getUserEmail(this);
         mUserPassword = SharedPreferencesUtil.getUserPassword(this);
 
         //if credentials exist on device

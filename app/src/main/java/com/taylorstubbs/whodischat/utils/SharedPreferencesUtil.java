@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.taylorstubbs.whodischat.R;
-
 /**
  * Utility for working with SharedPreferences
  */
@@ -13,7 +11,7 @@ import com.taylorstubbs.whodischat.R;
 public enum SharedPreferencesUtil {;
     private static final String TAG = "SharedPreferencesUtil";
     private static final String USER_PASSWORD_KEY = "userPasswordKey";
-    private static final String USER_ID_KEY = "userIdKey";
+    private static final String USER_EMAIL_KEY = "userEmailKey";
 
     /**
      * Set the user password.
@@ -37,7 +35,7 @@ public enum SharedPreferencesUtil {;
     public static void setUserId(Context context, String userId) {
         getSharedPreferences(context)
                 .edit()
-                .putString(USER_ID_KEY, userId)
+                .putString(USER_EMAIL_KEY, userId)
                 .apply();
     }
 
@@ -52,13 +50,13 @@ public enum SharedPreferencesUtil {;
     }
 
     /**
-     * Get the user ID.
+     * Get the user email.
      *
      * @param context   the activity context
-     * @return          the user ID
+     * @return          the user email
      */
-    public static String getUserId(Context context) {
-        return getSharedPreferences(context).getString(USER_ID_KEY, null);
+    public static String getUserEmail(Context context) {
+        return getSharedPreferences(context).getString(USER_EMAIL_KEY, null);
     }
 
     /**
