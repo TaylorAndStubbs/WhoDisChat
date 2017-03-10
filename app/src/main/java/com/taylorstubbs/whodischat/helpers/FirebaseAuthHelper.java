@@ -48,37 +48,6 @@ public class FirebaseAuthHelper {
     }
 
     /**
-     * Log in with the email and password.
-     * 
-     * @param email     the email
-     * @param password  the password
-     */
-    public void login(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                mCallbacks.onLogin(mAuth.getCurrentUser());
-                Log.d(TAG, String.valueOf(task.isSuccessful()));
-            }
-        });
-    }
-
-    /**
-     * Create a user with an email and password.
-     * 
-     * @param email     the email
-     * @param password  the password
-     */
-    public void createUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                mCallbacks.onCreateUser(mAuth.getCurrentUser());
-            }
-        });
-    }
-
-    /**
      * Create an anonymous user.
      */
     public void createAnonymousUser() {

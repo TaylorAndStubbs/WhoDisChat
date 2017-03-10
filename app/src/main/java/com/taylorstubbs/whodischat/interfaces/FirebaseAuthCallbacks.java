@@ -7,7 +7,5 @@ import com.google.firebase.auth.FirebaseUser;
  */
 
 public interface FirebaseAuthCallbacks {
-    void onLogin(FirebaseUser user);
     void onAnonymousLogin(FirebaseUser user);
-    void onCreateUser(FirebaseUser user);
 }

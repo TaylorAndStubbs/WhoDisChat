@@ -39,6 +39,7 @@ public class User implements Parcelable {
 
     public User(String userId) {
         this.userId = userId;
+        this.searchingForThread = false;
     }
 
     public User(Parcel in) {

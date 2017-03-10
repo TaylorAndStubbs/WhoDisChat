@@ -6,7 +6,11 @@ import android.support.v4.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.taylorstubbs.whodischat.fragments.LoadingFragment;
 import com.taylorstubbs.whodischat.fragments.StartChatFragment;
 import com.taylorstubbs.whodischat.helpers.FirebaseAuthHelper;
@@ -21,39 +25,59 @@ import com.taylorstubbs.whodischat.utils.SharedPreferencesUtil;
  * Activity that logs in the user, if they aren't already, and loads the appropriate fragment.
  */
 
-public class LandingActivity extends SingleFragmentActivity implements FirebaseAuthCallbacks, StartChatFragment.StartChatFragmentCallbacks {
+public class LandingActivity extends SingleFragmentActivity implements StartChatFragment.StartChatFragmentCallbacks {
     private static final String TAG = "LandingActivity";
 
-    private FirebaseAuthHelper mFirebaseAuthHelper;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mListener;
     private FirebaseDatabaseHelper mFirebaseDatabaseHelper;
     private FragmentHelper mFragmentHelper;
-    private String mUserEmail;
-    private String mUserPassword;
     private User mUser;
 
     @Override
     protected void onCreate(Bundle saveState) {
         super.onCreate(saveState);
 
-        mFirebaseAuthHelper = new FirebaseAuthHelper();
+        mAuth = FirebaseAuth.getInstance();
+        mListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                //user logs in
+                if (firebaseUser != null) {
+                    final User user = new User(firebaseUser.getUid());
+                    mFirebaseDatabaseHelper.saveUser(user)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            mFragmentHelper.replaceFragment(StartChatFragment.newInstance(user));
+                        }
+                    });
+                } else {
+                    //TODO logged out event
+                }
+            }
+        };
         mFirebaseDatabaseHelper = new FirebaseDatabaseHelper();
         mFragmentHelper = new FragmentHelper(this);
-        mFirebaseAuthHelper.setCallbacks(this);
-        mUserEmail = SharedPreferencesUtil.getUserEmail(this);
-        mUserPassword = SharedPreferencesUtil.getUserPassword(this);
 
-        //if credentials exist on device
-        if (mUserEmail != null && mUserPassword != null) {
-            //if user is logged in
-            if (mFirebaseAuthHelper.checkAuth() != null) {
-                startStartChatFragment(mFirebaseAuthHelper.checkAuth());
-            //if user is not logged in
-            } else {
-                mFirebaseAuthHelper.login(mUserEmail, mUserPassword);
-            }
-        //if credentials don't exist on device
+        mAuth.addAuthStateListener(mListener);
+
+        if (mAuth.getCurrentUser() == null) {
+            mAuth.signInAnonymously();
         } else {
-            mFirebaseAuthHelper.createAnonymousUser();
+            mFirebaseDatabaseHelper.getUser(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    mFragmentHelper.replaceFragment(StartChatFragment.newInstance(user));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    //TODO
+                }
+            });
         }
     }
 
@@ -63,47 +87,7 @@ public class LandingActivity extends SingleFragmentActivity implements FirebaseA
     }
 
     @Override
-    public void onLogin(FirebaseUser user) {
-        startStartChatFragment(user);
-    }
-
-    @Override
-    public void onAnonymousLogin(final FirebaseUser firebaseUser) {
-        mUser = new User(firebaseUser.getUid());
-        mUserEmail = AccountUtil.appendDomainToId(firebaseUser.getUid());
-        mUserPassword = AccountUtil.createRandomPassword();
-
-        //Save id and password to device
-        SharedPreferencesUtil.setUserId(this, mUserEmail);
-        SharedPreferencesUtil.setUserPassword(this, mUserPassword);
-
-        //log out of anonymous session
-        mFirebaseAuthHelper.logout();
-        //create user with id and password
-        mFirebaseAuthHelper.createUser(mUserEmail, mUserPassword);
-        //save user in database
-        mFirebaseDatabaseHelper.saveUser(mUser).addOnCompleteListener(this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                startStartChatFragment(firebaseUser);
-            }
-        });
-    }
-
-    @Override
-    public void onCreateUser(FirebaseUser user) {
-        startStartChatFragment(user);
-    }
-
-    @Override
     public void searchingForChat() {
         mFragmentHelper.replaceFragment(LoadingFragment.newInstance());
-    }
-
-    /**
-     * Start the StartChatFragment.
-     */
-    private void startStartChatFragment(FirebaseUser user) {
-        mFragmentHelper.replaceFragment(StartChatFragment.newInstance(mUser));
     }
 }

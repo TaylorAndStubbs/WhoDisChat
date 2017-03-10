@@ -14,7 +14,7 @@ public class FirebaseDatabaseHelper {
     private static final String TAG = "FirebaseDatabaseHelper";
     private static final String USER_REF = "users";
     private static final String USER_MESSAGE_THREAD_REF = "messageThread";
-    private static final String USER_SEARCHING_FOR_THREAD_REF = "searchForThread";
+    private static final String USER_SEARCHING_FOR_THREAD_REF = "searchingForThread";
 
     private FirebaseDatabase mDatabase;
 
@@ -32,14 +32,16 @@ public class FirebaseDatabaseHelper {
      * @return      the Task.
      */
     public Task<Void> saveUser(User user) {
-        //user starts out not searching for a thread
-        user.searchingForThread = false;
         return mDatabase.getReference().child(USER_REF).child(user.userId).setValue(user);
     }
 
     public Task<Void> findThread(String userId) {
         //Set userSearchingForThread to true
         return getReference(USER_REF).child(userId).child(USER_SEARCHING_FOR_THREAD_REF).setValue(true);
+    }
+
+    public DatabaseReference getUser(String userId) {
+        return getReference(USER_REF).child(userId);
     }
 
     /**
