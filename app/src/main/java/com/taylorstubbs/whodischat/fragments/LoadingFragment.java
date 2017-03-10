@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.taylorstubbs.whodischat.R;
 
@@ -15,19 +16,42 @@ import com.taylorstubbs.whodischat.R;
 
 public class LoadingFragment extends Fragment {
     private static final String TAG = "LoadingFragment";
+    public static final String ARGS_LOADING_MESSAGE = "loadingMessage";
+    public static final String TYPE_LOADING = "Loading";
+    public static final String TYPE_SEARCHING = "Searching";
+
+    private String mLoadingText;
+
+    private TextView mLoadingTextView;
 
     /**
-     * Create new instance.
+     * Create new loading fragment
      *
-     * @return  the fragment
+     * @param type  use static types, displays type of message
+     * @return      the fragment
      */
-    public static LoadingFragment newInstance() {
-        return new LoadingFragment();
+    public static LoadingFragment newInstance(String type) {
+        Bundle args = new Bundle();
+        LoadingFragment fragment = new LoadingFragment();
+        args.putString(ARGS_LOADING_MESSAGE, type);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mLoadingText = getArguments().getString(ARGS_LOADING_MESSAGE);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_loading, container, false);
+        View view = inflater.inflate(R.layout.fragment_loading, container, false);
+        mLoadingTextView = (TextView) view.findViewById(R.id.loading_text);
+        mLoadingTextView.setText(mLoadingText);
+
+        return view;
     }
 }

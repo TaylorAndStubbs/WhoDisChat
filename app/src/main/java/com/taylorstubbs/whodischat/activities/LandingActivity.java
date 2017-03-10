@@ -13,13 +13,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.taylorstubbs.whodischat.fragments.LoadingFragment;
 import com.taylorstubbs.whodischat.fragments.StartChatFragment;
-import com.taylorstubbs.whodischat.helpers.FirebaseAuthHelper;
 import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
 import com.taylorstubbs.whodischat.helpers.FragmentHelper;
-import com.taylorstubbs.whodischat.interfaces.FirebaseAuthCallbacks;
 import com.taylorstubbs.whodischat.models.User;
-import com.taylorstubbs.whodischat.utils.AccountUtil;
-import com.taylorstubbs.whodischat.utils.SharedPreferencesUtil;
 
 /**
  * Activity that logs in the user, if they aren't already, and loads the appropriate fragment.
@@ -83,11 +79,11 @@ public class LandingActivity extends SingleFragmentActivity implements StartChat
 
     @Override
     protected Fragment createFragment() {
-        return LoadingFragment.newInstance();
+        return LoadingFragment.newInstance(LoadingFragment.TYPE_LOADING);
     }
 
     @Override
     public void searchingForChat() {
-        mFragmentHelper.replaceFragment(LoadingFragment.newInstance());
+        mFragmentHelper.replaceFragment(LoadingFragment.newInstance(LoadingFragment.TYPE_SEARCHING));
     }
 }
