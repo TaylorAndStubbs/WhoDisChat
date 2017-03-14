@@ -70,7 +70,10 @@ public class StartChatFragment extends Fragment {
                 mFirebaseDatabaseHelper.findThread(mUser.userId).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        mCallbacks.searchingForChat();
+                        //in case fragment is already detached by the time this gets called
+                        if (mCallbacks != null) {
+                            mCallbacks.searchingForChat();
+                        }
                     }
                 });
             }
