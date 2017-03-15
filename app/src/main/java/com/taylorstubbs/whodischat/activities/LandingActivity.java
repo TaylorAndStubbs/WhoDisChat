@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.taylorstubbs.whodischat.fragments.ChatFragment;
 import com.taylorstubbs.whodischat.fragments.LoadingFragment;
 import com.taylorstubbs.whodischat.fragments.StartChatFragment;
 import com.taylorstubbs.whodischat.helpers.FirebaseDatabaseHelper;
@@ -85,6 +86,8 @@ public class LandingActivity extends SingleFragmentActivity implements StartChat
                 User user = dataSnapshot.getValue(User.class);
                 if (user == null) {
                     mFirebaseDatabaseHelper.saveUser(new User(firebaseUser.getUid()));
+                } else if (user.messageThread != null) {
+                    mFragmentHelper.replaceFragment(ChatFragment.newInstance(user));
                 } else if (user.searchingForThread) {
                    mFragmentHelper.replaceFragment(LoadingFragment.newInstance(LoadingFragment.TYPE_SEARCHING));
                 } else {

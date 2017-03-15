@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.taylorstubbs.whodischat.models.Message;
 import com.taylorstubbs.whodischat.models.User;
 
 /**
@@ -15,6 +16,7 @@ public class FirebaseDatabaseHelper {
     private static final String USER_REF = "users";
     private static final String USER_MESSAGE_THREAD_REF = "messageThread";
     private static final String USER_SEARCHING_FOR_THREAD_REF = "searchingForThread";
+    private static final String MESSAGE_THREAD_REF = "messageThreads";
 
     private FirebaseDatabase mDatabase;
 
@@ -38,6 +40,10 @@ public class FirebaseDatabaseHelper {
     public Task<Void> findThread(String userId) {
         //Set userSearchingForThread to true
         return getReference(USER_REF).child(userId).child(USER_SEARCHING_FOR_THREAD_REF).setValue(true);
+    }
+
+    public Task<Void> sendMessage(User user, Message message) {
+        return getReference(MESSAGE_THREAD_REF).child(user.messageThread).push().setValue(message);
     }
 
     public DatabaseReference getUser(String userId) {
