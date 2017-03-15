@@ -46,6 +46,10 @@ public class FirebaseDatabaseHelper {
         return getReference(MESSAGE_THREAD_REF).child(user.messageThread).push().setValue(message);
     }
 
+    public DatabaseReference getThread(String threadId) {
+        return getReference(MESSAGE_THREAD_REF).child(threadId);
+    }
+
     public DatabaseReference getUser(String userId) {
         return getReference(USER_REF).child(userId);
     }
