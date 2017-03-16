@@ -62,14 +62,15 @@ public class ChatFragment extends Fragment {
 
         mDatabaseHelper = new FirebaseDatabaseHelper();
         mUser = getArguments().getParcelable(ARGS_USER);
-        mMessageAdapter = new MessageAdapter(getContext(), new ArrayList<Message>(), mUser.userId);
         mManager = new LinearLayoutManager(getContext());
-        mManager.setStackFromEnd(true);
+        mManager.setReverseLayout(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        mMessageAdapter.clearMessages();
 
         mChildEventListener = new ChildEventListener() {
             @Override
@@ -113,10 +114,12 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        mSendButton = (Button) view.findViewById(R.id.send_button);
-        mTextInput = (EditText) view.findViewById(R.id.text_input);
         mTextRecycler = (RecyclerView) view.findViewById(R.id.text_recycler);
+        mMessageAdapter = new MessageAdapter(getContext(), new ArrayList<Message>(), mUser.userId, mTextRecycler);
+        mTextRecycler.setLayoutManager(mManager);
+        mTextRecycler.setAdapter(mMessageAdapter);
 
+        mTextInput = (EditText) view.findViewById(R.id.text_input);
         mTextInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -134,6 +137,7 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        mSendButton = (Button) view.findViewById(R.id.send_button);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,9 +145,6 @@ public class ChatFragment extends Fragment {
                 mDatabaseHelper.sendMessage(mUser, message);
             }
         });
-
-        mTextRecycler.setLayoutManager(mManager);
-        mTextRecycler.setAdapter(mMessageAdapter);
 
         return view;
     }

@@ -11,6 +11,7 @@ import com.taylorstubbs.whodischat.R;
 import com.taylorstubbs.whodischat.holders.MessageHolder;
 import com.taylorstubbs.whodischat.models.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,8 +24,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageHolder> {
     private List<Message> mMessages;
     private Context mContext;
     private String mSenderId;
+    private View mContainer;
 
-    public MessageAdapter(Context context, List<Message> messages, String senderId) {
+    public MessageAdapter(Context context, List<Message> messages, String senderId, View container) {
+        mContainer = container;
         mSenderId = senderId;
         mContext = context;
         mMessages = messages;
@@ -32,9 +35,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageHolder> {
 
     public void addMessage(Message message) {
         Log.d(TAG, "adding message");
-        mMessages.add(message);
+        mMessages.add(0, message);
         notifyDataSetChanged();
     }
+
+    public void clearMessages() {
+        mMessages = new ArrayList<Message>();
+    }
+
 
     @Override
     public MessageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
