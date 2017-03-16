@@ -36,9 +36,9 @@ public class MessageHolder extends RecyclerView.ViewHolder {
         mTextView.setText(message.text);
 
         if (mSenderId.equals(message.senderId)) {
-            mBackgroundView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+            mTextView.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
         } else {
-            mBackgroundView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+            mTextView.setTextColor(ContextCompat.getColor(mContext, R.color.red));
         }
     }
 }
