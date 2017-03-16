@@ -45,4 +45,8 @@ public class FragmentHelper {
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
+
+    public Fragment getFragment() {
+        return mFragmentManager.findFragmentById(R.id.fragment_container);
+    }
 }

@@ -24,7 +24,8 @@ import com.taylorstubbs.whodischat.utils.SharedPreferencesUtil;
  * Activity that logs in the user, if they aren't already, and loads the appropriate fragment.
  */
 
-public class LandingActivity extends SingleFragmentActivity implements StartChatFragment.StartChatFragmentCallbacks {
+public class LandingActivity extends SingleFragmentActivity
+        implements StartChatFragment.StartChatFragmentCallbacks {
     private static final String TAG = "LandingActivity";
 
     private FirebaseAuth mAuth;
@@ -83,15 +84,15 @@ public class LandingActivity extends SingleFragmentActivity implements StartChat
         mFirebaseDatabaseHelper.getUser(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if (user == null) {
+                mUser = dataSnapshot.getValue(User.class);
+                if (mUser == null) {
                     mFirebaseDatabaseHelper.saveUser(new User(firebaseUser.getUid()));
-                } else if (user.messageThread != null) {
-                    mFragmentHelper.replaceFragment(ChatFragment.newInstance(user));
-                } else if (user.searchingForThread) {
+                } else if (mUser.messageThread != null) {
+                    mFragmentHelper.replaceFragment(ChatFragment.newInstance(mUser));
+                } else if (mUser.searchingForThread) {
                    mFragmentHelper.replaceFragment(LoadingFragment.newInstance(LoadingFragment.TYPE_SEARCHING));
                 } else {
-                    mFragmentHelper.replaceFragment(StartChatFragment.newInstance(user));
+                    mFragmentHelper.replaceFragment(StartChatFragment.newInstance(mUser));
                 }
             }
 
@@ -100,5 +101,16 @@ public class LandingActivity extends SingleFragmentActivity implements StartChat
                 //TODO
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        //if hosting chatFragment
+        if (mFragmentHelper.getFragment() instanceof ChatFragment) {
+            mFirebaseDatabaseHelper.getThread(mUser.messageThread).removeValue();
+            mFirebaseDatabaseHelper.saveUser(new User(mUser.userId));
+        } else {
+            super.onBackPressed();
+        }
     }
 }
